@@ -15,4 +15,6 @@ mkdir -p rosbags
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm \
     -v ./rosbags:/opt/ros_ws/rosbags \
+    -v ./scripts/container_tools:/opt/ros_ws/container_tools \
+    -v ./config:/opt/ros_ws/config \
     av_tools_humble:latest-dev
