@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration variables
-VEHICLE_USER="hector"
-VEHICLE_HOST="helitebook"
-REMOTE_DIR="/home/hector/tartan_docker_images/"
+VEHICLE_USER="seb_adm"
+VEHICLE_HOST="core5.vp.five.ai"
+REMOTE_DIR="/data_ssd/rad/tartan_docker_images/"
 
 # Directory to save tar files locally
 LOCAL_SAVE_DIR="$HOME/tartan_docker_images"
@@ -56,9 +56,9 @@ else
     docker save $IMAGE_NAME > "$FULL_TAR_PATH"
 fi
 
-# Use scp to transfer the tar file to the remote directory
+# Use rsync to transfer the tar file to the remote directory
 echo -e "${WHITE}Transferring ${CYAN}$FULL_TAR_PATH ${WHITE}to ${BLUE}$VEHICLE_USER@$VEHICLE_HOST:$REMOTE_DIR${NO_COLOR}"
-scp "$FULL_TAR_PATH" "${VEHICLE_USER}@${VEHICLE_HOST}:${REMOTE_DIR}"
+rsync "$FULL_TAR_PATH" "${VEHICLE_USER}@${VEHICLE_HOST}:${REMOTE_DIR}"
 
 # Checking if scp succeeded
 if [ $? -ne 0 ]; then
@@ -67,6 +67,6 @@ if [ $? -ne 0 ]; then
     exit 1
 else
     echo -e "${WHITE}Image ${MAGENTA}$IMAGE_NAME ${WHITE}uploaded successfully to ${BLUE}$VEHICLE_HOST.${NO_COLOR}"
-    echo -e "Run \`docker load -i ${VEHICLE_USER}@${VEHICLE_HOST}:${REMOTE_DIR}\` on remote"
+    echo -e "Run \`docker load -i ${REMOTE_DIR}\` on remote"
 
 fi
