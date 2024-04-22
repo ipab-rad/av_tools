@@ -6,7 +6,7 @@
 # Initialise CMD as empty
 CMD=""
 
-# If an arg is defined, start contaier with bash
+# If an arg is defined, start container with bash
 if [ -n "$1" ]; then
     CMD="bash"
 fi

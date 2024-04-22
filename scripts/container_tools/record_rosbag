@@ -35,7 +35,7 @@ readarray -t TOPICS < "$TOPICS_LIST_FILE"
 
 # Start recording the topics
 if [ ${#TOPICS[@]} -eq 0 ]; then
-    echo "No topics found in the file. Stoping recording."
+    echo "No topics found in the file. Stopping recording."
     exit 1
 else
     echo -e "Recording topcis from ${MAGENTA}$TOPICS_LIST_FILE${NO_COLOR}"

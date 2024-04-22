@@ -28,7 +28,7 @@ else
     echo "Autocompletion script already sourced in .bashrc"
 fi
 
-# Get the absolute directory name of the script 
+# Get the absolute directory name of the script
 SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 
 # Check if .bashrc already has the updated PATH

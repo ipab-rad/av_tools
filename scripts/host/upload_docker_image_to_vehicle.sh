@@ -42,7 +42,7 @@ if [ -f "$FULL_TAR_PATH" ]; then
     echo -e "${WHITE}File ${CYAN}$FULL_TAR_PATH ${WHITE}already exists. Do you want to overwrite?${NO_COLOR}"
     read -p "(y/N): " response
     case "$response" in
-        [yY][eE][sS]|[yY]) 
+        [yY][eE][sS]|[yY])
             echo -e "${YELLOW}Overwriting the file...${NO_COLOR}"
             echo -e "${WHITE}Saving Docker image ${MAGENTA}$IMAGE_NAME ${WHITE}to a tar file at ${CYAN}$FULL_TAR_PATH...${NO_COLOR}"
             docker save $IMAGE_NAME > "$FULL_TAR_PATH"
