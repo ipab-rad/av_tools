@@ -138,7 +138,7 @@ repos:
       - id: ros-include-guard
       - id: sort-package-xml
 
-  - repo: https://github.com/hadolint/hadolint
+  - repo: https://github.com/AleksaC/hadolint-py
     rev: v2.12.1-beta
     hooks:
       - id: hadolint
