@@ -12,6 +12,12 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-dataspeed-ulc-msgs \
         ros-"$ROS_DISTRO"-dbw-ford-msgs \
         ros-"$ROS_DISTRO"-gps-msgs \
+        ros-"$ROS_DISTRO"-ouster-msgs \
+        ros-"$ROS_DISTRO"-velodyne-msgs \
+        ros-"$ROS_DISTRO"-flir-camera-msgs \
+        ros-"$ROS_DISTRO"-microstrain-inertial-msgs \
+        ros-"$ROS_DISTRO"-novatel-gps-msgs \
+        ros-"$ROS_DISTRO"-radar-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
