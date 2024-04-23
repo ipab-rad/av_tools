@@ -22,5 +22,5 @@ mkdir -p rosbags
 # Run docker image
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm  \
-    -v ./rosbags:/opt/ros_ws/rosbags \
+    -v rosbags:/opt/ros_ws/rosbags \
     av_tools_humble:latest-runtime $CMD
