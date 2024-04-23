@@ -16,11 +16,14 @@ DOCKER_BUILDKIT=1 docker build \
     -t av_tools_humble:latest-runtime \
     -f Dockerfile --target runtime .
 
+# Get the absolute path of the script
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
 # Create a dir to store rosbags
-mkdir -p rosbags
+mkdir -p $SCRIPT_DIR/rosbags
 
 # Run docker image
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm  \
-    -v rosbags:/opt/ros_ws/rosbags \
+    -v $SCRIPT_DIR/rosbags:/opt/ros_ws/rosbags \
     av_tools_humble:latest-runtime $CMD
