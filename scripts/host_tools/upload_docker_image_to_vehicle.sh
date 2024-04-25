@@ -60,7 +60,7 @@ fi
 echo -e "${WHITE}Transferring ${CYAN}$FULL_TAR_PATH ${WHITE}to ${BLUE}$VEHICLE_USER@$VEHICLE_HOST:$REMOTE_DIR${NO_COLOR}"
 rsync "$FULL_TAR_PATH" "${VEHICLE_USER}@${VEHICLE_HOST}:${REMOTE_DIR}"
 
-# Checking if scp succeeded
+# Checking if rsync succeeded
 if [ $? -ne 0 ]; then
     echo -e "${RED}Failed to transfer file. Unable to reach host or other transfer error.${NO_COLOR}"
     # Handle error as needed
