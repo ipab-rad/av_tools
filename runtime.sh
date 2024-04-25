@@ -13,7 +13,7 @@ fi
 
 # Build docker image only up to base stage
 DOCKER_BUILDKIT=1 docker build \
-    -t av_tools_humble:latest-runtime \
+    -t av_tools_humble:latest \
     -f Dockerfile --target runtime .
 
 # Get the absolute path of the script
@@ -26,4 +26,4 @@ mkdir -p $SCRIPT_DIR/rosbags
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm  \
     -v $SCRIPT_DIR/rosbags:/opt/ros_ws/rosbags \
-    av_tools_humble:latest-runtime $CMD
+    av_tools_humble:latest $CMD
