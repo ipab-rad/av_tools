@@ -69,4 +69,4 @@ CMD ["bash"]
 FROM base as runtime
 
 # Start recording a rosbag by default
-CMD ["/opt/ros_ws/container_tools/record_rosbag"]
+CMD ["/opt/ros_ws/container_tools/record_rosbag.sh"]
