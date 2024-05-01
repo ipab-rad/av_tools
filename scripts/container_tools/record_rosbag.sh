@@ -39,5 +39,5 @@ if [ ${#TOPICS[@]} -eq 0 ]; then
     exit 1
 else
     echo -e "Recording topcis from ${MAGENTA}$TOPICS_LIST_FILE${NO_COLOR}"
-    ros2 bag record -s mcap -o "$OUTPUT_DIR/${DATE_PREFIX}_sensor_recording" "${TOPICS[@]}"
+    ros2 bag record -s mcap --max-cache-size 1048576000 -o "$OUTPUT_DIR/${DATE_PREFIX}_sensor_recording" "${TOPICS[@]}"
 fi
