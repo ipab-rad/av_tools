@@ -1,4 +1,4 @@
-# #!/bin/bash
+#!/bin/bash
 
 # Path to the autocompletion script
 COMPLETION_SCRIPT="$HOME/.upload_docker_image_to_vehicle_completion.sh"
