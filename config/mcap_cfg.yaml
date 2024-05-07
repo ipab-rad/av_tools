@@ -7,5 +7,5 @@ noMessageIndex: false
 noSummary: false
 chunkSize: 786432
 compression: "Zstd"
-compressionLevel: "Default"
+compressionLevel: "Fast"
 forceCompression: false
