@@ -14,7 +14,7 @@ DATE_PREFIX=$(date "+%Y_%m_%d-%H_%M_%S")
 # Define default behavior if no file is provided
 if [ "$#" -eq 0 ]; then
     echo -e "No topics list file provided. ${CYAN}Recording all topics.${NO_COLOR}"
-    ros2 bag record -s mcap --all --max-cache-size 1048576000 --ignore-leaf-topics \
+    ros2 bag record -s mcap --all --max-cache-size 1048576000 \
         --storage-config-file "$ROS_WS/config/mcap_cfg.yaml" \
         -o "$OUTPUT_DIR/${DATE_PREFIX}_sensor_recording"
     exit 0
@@ -41,7 +41,7 @@ if [ ${#TOPICS[@]} -eq 0 ]; then
     exit 1
 else
     echo -e "Recording topcis from ${MAGENTA}$TOPICS_LIST_FILE${NO_COLOR}"
-    ros2 bag record -s mcap --max-cache-size 1048576000 --ignore-leaf-topics \
+    ros2 bag record -s mcap --max-cache-size 1048576000 \
         --storage-config-file "$ROS_WS/config/mcap_cfg.yaml" \
         -o "$OUTPUT_DIR/${DATE_PREFIX}_sensor_recording" "${TOPICS[@]}"
 fi
