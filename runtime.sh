@@ -25,5 +25,5 @@ mkdir -p $SCRIPT_DIR/rosbags
 # Run docker image
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm  \
-    -v $SCRIPT_DIR/rosbags:/opt/ros_ws/rosbags \
+    -v /recorded_datasets/edinburgh:/opt/ros_ws/rosbags \
     av_tools_humble:latest $CMD

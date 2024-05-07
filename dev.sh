@@ -17,7 +17,7 @@ mkdir -p rosbags
 # Run docker image with local code volumes for development
 docker run -it --rm --net host --privileged \
     -v /dev/shm:/dev/shm \
-    -v $SCRIPT_DIR/rosbags:/opt/ros_ws/rosbags \
+    -v /recorded_datasets/edinburgh:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
     av_tools_humble:latest
