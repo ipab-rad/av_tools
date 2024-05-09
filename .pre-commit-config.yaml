@@ -33,7 +33,6 @@ repos:
         exclude_types: [rst]
       - id: fix-byte-order-marker
 
-
   # Python hooks
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.15.2
@@ -41,24 +40,11 @@ repos:
     -   id: pyupgrade
         args: [--py36-plus]
 
-  # PyDocStyle
-  - repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.3.0
-    hooks:
-    - id: pydocstyle
-      args: ["--ignore=D100,D101,D102,D103,D104,D105,D106,D107,D203,D212,D404"]
-
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
-        args: ["--line-length=99"]
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-    - id: flake8
-      args: ["--extend-ignore=E501"]
+        args: ["--line-length=79", -S]
 
   # CPP hooks
   - repo: https://github.com/pre-commit/mirrors-clang-format
@@ -84,7 +70,22 @@ repos:
         entry: ament_cpplint
         language: system
         files: \.(h\+\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\+\+|cxx|tpp|txx)$
-        args: ["--linelength=100", "--filter=-whitespace/newline"]
+        args: ["--linelength=100", "--filter=-legal/copyright,-build/include_order"]
+
+  # Cmake hooks
+  - repo: local
+    hooks:
+      - id: ament_lint_cmake
+        name: ament_lint_cmake
+        description: Check format of CMakeLists.txt files.
+        entry: ament_lint_cmake
+        language: system
+        files: CMakeLists\.txt$
+
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
 
   # Docs - RestructuredText hooks
   - repo: https://github.com/PyCQA/doc8
@@ -108,9 +109,10 @@ repos:
     rev: v2.2.6
     hooks:
       - id: codespell
-        args: ['--write-changes', '--uri-ignore-words-list=ist', '-L manuel,ned']
+        args: ['--write-changes', '--uri-ignore-words-list=ist', '-L manuel']
         exclude: CHANGELOG\.rst|\.(svg|pyc|drawio|dae)$
 
+  # Check Github files
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.28.2
     hooks:
@@ -138,25 +140,12 @@ repos:
       - id: ros-include-guard
       - id: sort-package-xml
 
+  # Dockerfiles
   - repo: https://github.com/AleksaC/hadolint-py
     rev: v2.12.1b3
     hooks:
       - id: hadolint
         args: ['--ignore=DL3008']
-
-  - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: v0.6.13
-    hooks:
-      - id: cmake-format
-
-  - repo: https://github.com/Takishima/cmake-pre-commit-hooks
-    rev: v1.9.5
-    hooks:
-      - id: clang-format
-      - id: clang-tidy
-        args: [--checks=readability-magic-numbers,--warnings-as-errors=*]
-      - id: cppcheck
-      - id: include-what-you-use
 
 ci:
     autofix_commit_msg: |
@@ -167,4 +156,5 @@ ci:
     autoupdate_branch: ''
     autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
     autoupdate_schedule: weekly
+    skip: [ament_cppcheck, ament_cpplint, ament_lint_cmake]
     submodules: false
