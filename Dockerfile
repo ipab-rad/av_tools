@@ -24,6 +24,9 @@ RUN apt-get update \
 ENV ROS_WS /opt/ros_ws
 WORKDIR $ROS_WS
 
+# Set cyclone DDS ROS RMW
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
 # Copy tools scripts and config
 COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
