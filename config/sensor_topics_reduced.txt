@@ -23,8 +23,6 @@
 /cameras/rspr_r/image_raw/reduced
 /cameras/rspr_r/meta
 /diagnostics
-/ekf/status
-/imu/data
 /joint_states
 /output/radar/bumper_front_centre/far/image
 /output/radar/bumper_front_centre/near/image
@@ -56,6 +54,7 @@
 /sensor/gps/rear/insstdev
 /sensor/gps/rear/nav_sat_fix
 /sensor/gps/rear/psrdop2
+/sensor/imu/data
 /sensor/lidar/left/points
 /sensor/lidar/left/velodyne_packets
 /sensor/lidar/right/points
