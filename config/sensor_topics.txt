@@ -56,10 +56,7 @@
 /sensor/imu/ekf/status
 /sensor/imu/nmea
 /sensor/lidar/left/points
-/sensor/lidar/left/velodyne_packets
 /sensor/lidar/right/points
-/sensor/lidar/right/velodyne_packets
-/sensor/lidar/top/ouster_driver/transition_event
 /sensor/lidar/top/points
 /tf
 /tf_static
