@@ -17,6 +17,7 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-flir-camera-msgs \
         ros-"$ROS_DISTRO"-microstrain-inertial-msgs \
         ros-"$ROS_DISTRO"-novatel-gps-msgs \
+        ros-"$ROS_DISTRO"-nmea-msgs \
         ros-"$ROS_DISTRO"-radar-msgs \
     && rm -rf /var/lib/apt/lists/*
 
