@@ -28,6 +28,11 @@ WORKDIR $ROS_WS
 # Set cyclone DDS ROS RMW
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
+COPY ./cyclone_dds.xml $ROS_WS/
+
+# Configure Cyclone cfg file
+ENV CYCLONEDDS_URI=file://${ROS_WS}/cyclone_dds.xml
+
 # Copy tools scripts and config
 COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
