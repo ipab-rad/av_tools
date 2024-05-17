@@ -45,7 +45,7 @@ fi
 
 # Build docker image up to dev stage
 DOCKER_BUILDKIT=1 docker build \
-    -t av_tools_humble:latest \
+    -t av_tools:latest-dev \
     -f Dockerfile --target dev .
 
 # Get the absolute path of the script
@@ -57,4 +57,4 @@ docker run -it --rm --net host --privileged \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
-    av_tools_humble:latest
+    av_tools:latest-dev
