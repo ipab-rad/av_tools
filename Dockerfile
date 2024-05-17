@@ -33,6 +33,9 @@ COPY ./cyclone_dds.xml $ROS_WS/
 # Configure Cyclone cfg file
 ENV CYCLONEDDS_URI=file://${ROS_WS}/cyclone_dds.xml
 
+# Enable ROS log colorised output
+ENV RCUTILS_COLORIZED_OUTPUT=1
+
 # Copy tools scripts and config
 COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
