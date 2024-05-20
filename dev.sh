@@ -38,7 +38,7 @@ done
 
 # Verify ROSBAGS_DIR exists
 if [ ! -d "$ROSBAGS_DIR" ]; then
-    echo "$ROSBAGS_DIR does not exists! Please provide a valid path to store rosbags"
+    echo "$ROSBAGS_DIR does not exist! Please provide a valid path to store rosbags"
     exit 1
 fi
 
