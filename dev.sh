@@ -57,4 +57,5 @@ docker run -it --rm --net host --privileged \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
+    -v /etc/localtime:/etc/localtime:ro \
     av_tools:latest-dev
