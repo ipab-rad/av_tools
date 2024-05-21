@@ -17,12 +17,24 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-flir-camera-msgs \
         ros-"$ROS_DISTRO"-microstrain-inertial-msgs \
         ros-"$ROS_DISTRO"-novatel-gps-msgs \
+        ros-"$ROS_DISTRO"-nmea-msgs \
         ros-"$ROS_DISTRO"-radar-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
 ENV ROS_WS /opt/ros_ws
 WORKDIR $ROS_WS
+
+# Set cyclone DDS ROS RMW
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+COPY ./cyclone_dds.xml $ROS_WS/
+
+# Configure Cyclone cfg file
+ENV CYCLONEDDS_URI=file://${ROS_WS}/cyclone_dds.xml
+
+# Enable ROS log colorised output
+ENV RCUTILS_COLORIZED_OUTPUT=1
 
 # Copy tools scripts and config
 COPY scripts/container_tools $ROS_WS/container_tools
