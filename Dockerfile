@@ -4,21 +4,24 @@ FROM ros:humble-ros-base-jammy AS base
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get -y --quiet --no-install-recommends install \
-        ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
-        ros-"$ROS_DISTRO"-mcap-vendor \
-        ros-"$ROS_DISTRO"-foxglove-bridge \
-        ros-"$ROS_DISTRO"-rmw-cyclonedds-cpp \
         ros-"$ROS_DISTRO"-can-msgs \
         ros-"$ROS_DISTRO"-dataspeed-ulc-msgs \
         ros-"$ROS_DISTRO"-dbw-ford-msgs \
-        ros-"$ROS_DISTRO"-gps-msgs \
-        ros-"$ROS_DISTRO"-ouster-msgs \
-        ros-"$ROS_DISTRO"-velodyne-msgs \
+        ros-"$ROS_DISTRO"-ffmpeg-image-transport \
         ros-"$ROS_DISTRO"-flir-camera-msgs \
+        ros-"$ROS_DISTRO"-foxglove-bridge \
+        ros-"$ROS_DISTRO"-gps-msgs \
+        ros-"$ROS_DISTRO"-image-transport \
+        ros-"$ROS_DISTRO"-image-transport-plugins \
+        ros-"$ROS_DISTRO"-mcap-vendor \
         ros-"$ROS_DISTRO"-microstrain-inertial-msgs \
-        ros-"$ROS_DISTRO"-novatel-gps-msgs \
         ros-"$ROS_DISTRO"-nmea-msgs \
+        ros-"$ROS_DISTRO"-novatel-gps-msgs \
+        ros-"$ROS_DISTRO"-ouster-msgs \
         ros-"$ROS_DISTRO"-radar-msgs \
+        ros-"$ROS_DISTRO"-rmw-cyclonedds-cpp \
+        ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
+        ros-"$ROS_DISTRO"-velodyne-msgs \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
