@@ -22,6 +22,8 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-rmw-cyclonedds-cpp \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
+        ros-"$ROS_DISTRO"-geographic-msgs \
+        python3-vcstool \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
@@ -49,6 +51,21 @@ RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
     #    convenience when running interactively
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
 
+# Create dep_ws
+ENV DEP_WS /opt/dep_ws
+WORKDIR $DEP_WS
+
+# Clone repos and build autoware msgs
+COPY autoware_msgs.repos $DEP_WS/
+RUN mkdir src && vcs import src < autoware_msgs.repos \
+    && . /opt/ros/"$ROS_DISTRO"/setup.sh \
+    && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && rm -rf ./src ./build ./log \
+    && echo "source $DEP_WS/install/setup.bash" >> /root/.bashrc
+
+# Come back to ros_ws
+WORKDIR $ROS_WS
+
 # -----------------------------------------------------------------------
 
 FROM base AS prebuilt
@@ -57,7 +74,7 @@ FROM base AS prebuilt
 
 # -----------------------------------------------------------------------
 
-FROM base AS dev
+FROM prebuilt AS dev
 
 # Install basic dev tools (And clean apt cache afterwards)
 RUN apt-get update \
