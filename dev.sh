@@ -53,8 +53,10 @@ SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 # Run docker image with local code volumes for development
 docker run -it --rm --net host --privileged \
-    -v /dev/shm:/dev/shm \
+    -v /dev:/dev \
+    -v /tmp:/tmp \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
+    -v $SCRIPT_DIR/cyclone_dds.xml:/opt/ros_ws/cyclone_dds.xml \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
     -v /etc/localtime:/etc/localtime:ro \

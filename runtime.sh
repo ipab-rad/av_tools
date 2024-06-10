@@ -24,7 +24,8 @@ mkdir -p $SCRIPT_DIR/rosbags
 
 # Run docker image
 docker run -it --rm --net host --privileged \
-    -v /dev/shm:/dev/shm  \
+    -v /dev:/dev \
+    -v /tmp:/tmp \
     -v /recorded_datasets/edinburgh:/opt/ros_ws/rosbags \
     -v /etc/localtime:/etc/localtime:ro \
     av_tools:latest $CMD
