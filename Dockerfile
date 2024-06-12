@@ -86,6 +86,8 @@ RUN apt-get update \
         inetutils-ping \
         # Bash auto-completion for convenience
         bash-completion \
+        # ROS Rqt graph \
+        ros-"$ROS_DISTRO"-rqt-graph \
     && rm -rf /var/lib/apt/lists/*
 
 # Add colcon build alias for convenience
