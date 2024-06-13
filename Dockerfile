@@ -88,6 +88,8 @@ RUN apt-get update \
         bash-completion \
         # ROS Rqt graph \
         ros-"$ROS_DISTRO"-rqt-graph \
+        # Plot juggler
+        ros-"$ROS_DISTRO"-plotjuggler-ros \
     && rm -rf /var/lib/apt/lists/*
 
 # Add colcon build alias for convenience
