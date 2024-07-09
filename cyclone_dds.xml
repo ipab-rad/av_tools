@@ -2,12 +2,12 @@
 <CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config
 https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
     <Domain id="any">
-        <SharedMemory>
+        <!-- <SharedMemory>
             <Enable>true</Enable>
             <LogLevel>info</LogLevel>
-        </SharedMemory>
+        </SharedMemory> -->
         <Internal>
-            <SocketReceiveBufferSize min="10MB"/>
+            <SocketReceiveBufferSize min="15MB"/>
         </Internal>
     </Domain>
 </CycloneDDS>
