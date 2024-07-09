@@ -23,11 +23,13 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
         ros-"$ROS_DISTRO"-geographic-msgs \
+        python3-pip \
         python3-vcstool \
+    && pip install mcap colorama \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
-ENV ROS_WS /opt/ros_ws
+ENV ROS_WS=/opt/ros_ws
 WORKDIR $ROS_WS
 
 # Set cyclone DDS ROS RMW
@@ -52,7 +54,7 @@ RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
 
 # Create dep_ws
-ENV DEP_WS /opt/dep_ws
+ENV DEP_WS=/opt/dep_ws
 WORKDIR $DEP_WS
 
 # Clone repos and build autoware msgs
@@ -102,7 +104,7 @@ CMD ["bash"]
 
 # -----------------------------------------------------------------------
 
-FROM base as runtime
+FROM base AS runtime
 
 # Start recording a rosbag by default
 CMD ["/opt/ros_ws/container_tools/record_rosbag.sh"]
