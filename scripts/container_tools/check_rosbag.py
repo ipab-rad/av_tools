@@ -13,24 +13,27 @@ ouster_freq = 10
 
 # Topics frequencies dict
 topic_frequencies = dict(
-    [("/sensor/camera/fsp_l/image_raw", cameras_freq),
-     ("/sensor/camera/fsp_l/image_rect_color", cameras_freq),
-     ("/sensor/camera/lspr_l/image_raw", cameras_freq),
-     ("/sensor/camera/lspr_l/image_rect_color", cameras_freq),
-     ("/sensor/camera/lspf_r/image_raw", cameras_freq),
-     ("/sensor/camera/lspf_r/image_rect_color", cameras_freq),
-     ("/sensor/camera/rsp_l/image_raw", cameras_freq),
-     ("/sensor/camera/rsp_l/image_rect_color", cameras_freq),
-     ("/sensor/camera/rspf_l/image_raw", cameras_freq),
-     ("/sensor/camera/rspf_l/image_rect_color", cameras_freq),
-     ("/sensor/camera/rspr_r/image_raw", cameras_freq),
-     ("/sensor/camera/rspr_r/image_rect_color", cameras_freq),
-     ("/sensor/lidar/left/points", velodynes_freq),
-     ("/sensor/lidar/right/points", velodynes_freq),
-     ("/sensor/lidar/top/points", ouster_freq)]
-    )
+    [
+        ("/sensor/camera/fsp_l/image_raw", cameras_freq),
+        ("/sensor/camera/fsp_l/image_rect_color", cameras_freq),
+        ("/sensor/camera/lspr_l/image_raw", cameras_freq),
+        ("/sensor/camera/lspr_l/image_rect_color", cameras_freq),
+        ("/sensor/camera/lspf_r/image_raw", cameras_freq),
+        ("/sensor/camera/lspf_r/image_rect_color", cameras_freq),
+        ("/sensor/camera/rsp_l/image_raw", cameras_freq),
+        ("/sensor/camera/rsp_l/image_rect_color", cameras_freq),
+        ("/sensor/camera/rspf_l/image_raw", cameras_freq),
+        ("/sensor/camera/rspf_l/image_rect_color", cameras_freq),
+        ("/sensor/camera/rspr_r/image_raw", cameras_freq),
+        ("/sensor/camera/rspr_r/image_rect_color", cameras_freq),
+        ("/sensor/lidar/left/points", velodynes_freq),
+        ("/sensor/lidar/right/points", velodynes_freq),
+        ("/sensor/lidar/top/points", ouster_freq),
+    ]
+)
 
 topics_summary_dict = OrderedDict()
+
 
 def get_mcap_summary(mcap_file_path):
     """
@@ -38,14 +41,14 @@ def get_mcap_summary(mcap_file_path):
 
     Parameters:
     mcap_file_path (str): The path to the MCAP file.
-    """    
+    """
     with open(mcap_file_path, 'rb') as f:
-        # Read mcap 
+        # Read mcap
         reader = make_reader(f)
         # Extract summary
         mcap = reader.get_summary()
         topics_number = mcap.statistics.channel_count
-                
+
         # Extract message start and end times in nanoseconds
         start_time_ns = mcap.statistics.message_start_time
         end_time_ns = mcap.statistics.message_end_time
@@ -54,16 +57,20 @@ def get_mcap_summary(mcap_file_path):
 
         topic_summaries = {}
         for idx, channel in mcap.channels.items():
-            topic_name = channel.topic          
+            topic_name = channel.topic
             if idx in mcap.statistics.channel_message_counts:
                 msg_count = mcap.statistics.channel_message_counts[idx]
 
             if topic_name in topic_frequencies:
                 # Calculate loss data
-                expected_msg_count = int(topic_frequencies[topic_name] * duration_sec)
-                msg_count_loss =  msg_count - expected_msg_count
-                msg_time_loss = msg_count_loss/topic_frequencies[topic_name] * 1000
-                
+                expected_msg_count = int(
+                    topic_frequencies[topic_name] * duration_sec
+                )
+                msg_count_loss = msg_count - expected_msg_count
+                msg_time_loss = (
+                    msg_count_loss / topic_frequencies[topic_name] * 1000
+                )
+
                 color = Fore.WHITE
                 if msg_count_loss == 0:
                     # No msgs were lost
@@ -74,24 +81,27 @@ def get_mcap_summary(mcap_file_path):
                 else:
                     # We have more msgs
                     color = Fore.LIGHTYELLOW_EX
-                
+
                 color_highlight = Fore.LIGHTWHITE_EX
-                
-                msg_time_loss = "{:.2f}".format(msg_time_loss)
-                    
+
+                msg_time_loss = f"{msg_time_loss:.2f}"
+
                 topic_summary = (
                     f"{color_highlight}{topic_name:40}{Style.RESET_ALL} count: {msg_count:4}\t"
                     f"expected_count: {expected_msg_count:4}\tmsgs_lost: {color}{msg_count_loss} "
                     f"({msg_time_loss:3} ms){Style.RESET_ALL}"
-                    )
+                )
 
                 topic_summaries[topic_name] = topic_summary
         print(f"{os.path.basename(mcap_file_path)}:")
-        print(f"\t{Fore.LIGHTWHITE_EX}Duration: {Fore.MAGENTA}{duration_sec} s{Style.RESET_ALL}")
+        print(
+            f"\t{Fore.LIGHTWHITE_EX}Duration: {Fore.MAGENTA}{duration_sec} s{Style.RESET_ALL}"
+        )
         for topic_name in sorted(topic_summaries.keys()):
             print(f"\t{topic_summaries[topic_name]}")
-    
+
     return True
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -100,9 +110,9 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     input_path = args.input
-    
+
     if os.path.isdir(input_path):
         # Get all .mcap files in the directory
         for file_name in sorted(os.listdir(input_path)):
@@ -113,6 +123,7 @@ def main():
         get_mcap_summary(input_path)
     else:
         print("The input path is not a valid file or directory")
+
 
 if __name__ == "__main__":
     main()
