@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""This script reads ROS2 MCAP files to summarize sensor data message losses."""
+"""This script reads MCAP files to summarize sensor data message losses."""
 
 import argparse
 import os
