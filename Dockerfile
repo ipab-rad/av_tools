@@ -25,7 +25,7 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-geographic-msgs \
         python3-pip \
         python3-vcstool \
-    && pip install mcap colorama \
+    && pip install --no-cache-dir mcap colorama \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder

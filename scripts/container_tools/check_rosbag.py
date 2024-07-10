@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
-import os
+"""This script reads ROS2 MCAP files to summarize sensor data message losses."""
+
 import argparse
-from mcap.reader import make_reader
-from colorama import Fore, Style
+import os
 from collections import OrderedDict
+
+from colorama import Fore, Style
+
+from mcap.reader import make_reader
 
 # Sensors frequencies
 cameras_freq = 20
@@ -12,25 +16,23 @@ velodynes_freq = 9.92
 ouster_freq = 10
 
 # Topics frequencies dict
-topic_frequencies = dict(
-    [
-        ("/sensor/camera/fsp_l/image_raw", cameras_freq),
-        ("/sensor/camera/fsp_l/image_rect_color", cameras_freq),
-        ("/sensor/camera/lspr_l/image_raw", cameras_freq),
-        ("/sensor/camera/lspr_l/image_rect_color", cameras_freq),
-        ("/sensor/camera/lspf_r/image_raw", cameras_freq),
-        ("/sensor/camera/lspf_r/image_rect_color", cameras_freq),
-        ("/sensor/camera/rsp_l/image_raw", cameras_freq),
-        ("/sensor/camera/rsp_l/image_rect_color", cameras_freq),
-        ("/sensor/camera/rspf_l/image_raw", cameras_freq),
-        ("/sensor/camera/rspf_l/image_rect_color", cameras_freq),
-        ("/sensor/camera/rspr_r/image_raw", cameras_freq),
-        ("/sensor/camera/rspr_r/image_rect_color", cameras_freq),
-        ("/sensor/lidar/left/points", velodynes_freq),
-        ("/sensor/lidar/right/points", velodynes_freq),
-        ("/sensor/lidar/top/points", ouster_freq),
-    ]
-)
+topic_frequencies = {
+    '/sensor/camera/fsp_l/image_raw': cameras_freq,
+    '/sensor/camera/fsp_l/image_rect_color': cameras_freq,
+    '/sensor/camera/lspr_l/image_raw': cameras_freq,
+    '/sensor/camera/lspr_l/image_rect_color': cameras_freq,
+    '/sensor/camera/lspf_r/image_raw': cameras_freq,
+    '/sensor/camera/lspf_r/image_rect_color': cameras_freq,
+    '/sensor/camera/rsp_l/image_raw': cameras_freq,
+    '/sensor/camera/rsp_l/image_rect_color': cameras_freq,
+    '/sensor/camera/rspf_l/image_raw': cameras_freq,
+    '/sensor/camera/rspf_l/image_rect_color': cameras_freq,
+    '/sensor/camera/rspr_r/image_raw': cameras_freq,
+    '/sensor/camera/rspr_r/image_rect_color': cameras_freq,
+    '/sensor/lidar/left/points': velodynes_freq,
+    '/sensor/lidar/right/points': velodynes_freq,
+    '/sensor/lidar/top/points': ouster_freq,
+}
 
 topics_summary_dict = OrderedDict()
 
@@ -47,7 +49,6 @@ def get_mcap_summary(mcap_file_path):
         reader = make_reader(f)
         # Extract summary
         mcap = reader.get_summary()
-        topics_number = mcap.statistics.channel_count
 
         # Extract message start and end times in nanoseconds
         start_time_ns = mcap.statistics.message_start_time
@@ -84,33 +85,36 @@ def get_mcap_summary(mcap_file_path):
 
                 color_highlight = Fore.LIGHTWHITE_EX
 
-                msg_time_loss = f"{msg_time_loss:.2f}"
+                msg_time_loss = f'{msg_time_loss:.2f}'
 
                 topic_summary = (
-                    f"{color_highlight}{topic_name:40}{Style.RESET_ALL} count: {msg_count:4}\t"
-                    f"expected_count: {expected_msg_count:4}\tmsgs_lost: {color}{msg_count_loss} "
-                    f"({msg_time_loss:3} ms){Style.RESET_ALL}"
+                    f'{color_highlight}{topic_name:40}{Style.RESET_ALL}'
+                    f'count: {msg_count:4}\t'
+                    f'expected_count: {expected_msg_count:4}\t'
+                    f'msgs_lost: {color}{msg_count_loss} '
+                    f'({msg_time_loss:3} ms){Style.RESET_ALL}'
                 )
 
                 topic_summaries[topic_name] = topic_summary
-        print(f"{os.path.basename(mcap_file_path)}:")
+        print(f'{os.path.basename(mcap_file_path)}:')
         print(
-            f"\t{Fore.LIGHTWHITE_EX}Duration: {Fore.MAGENTA}{duration_sec} s{Style.RESET_ALL}"
+            f'\t{Fore.LIGHTWHITE_EX}Duration: '
+            f'{Fore.MAGENTA}{duration_sec} s{Style.RESET_ALL}'
         )
         for topic_name in sorted(topic_summaries.keys()):
-            print(f"\t{topic_summaries[topic_name]}")
+            print(f'\t{topic_summaries[topic_name]}')
 
     return True
 
 
 def main():
+    """Parse arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "input", help="input bag path (folder or filepath) to read from"
+        'input', help='input bag path (folder or filepath) to read from'
     )
 
     args = parser.parse_args()
-
     input_path = args.input
 
     if os.path.isdir(input_path):
@@ -122,8 +126,8 @@ def main():
     elif os.path.isfile(input_path) and input_path.endswith('.mcap'):
         get_mcap_summary(input_path)
     else:
-        print("The input path is not a valid file or directory")
+        print('The input path is not a valid file or directory')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
