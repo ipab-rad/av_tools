@@ -3,6 +3,10 @@
 # Build docker dev stage and add local code for live development
 # ----------------------------------------------------------------
 
+CYCLONE_VOL=""
+
+# Default cyclone_dds.xml path
+CYCLONE_DIR=/home/$USER/cyclone_dds.xml
 # Default in-vehicle rosbags directory
 ROSBAGS_DIR=/recorded_datasets/edinburgh
 # Default value for headless
@@ -10,22 +14,32 @@ headless=false
 
 # Function to print usage
 usage() {
-    echo "Usage: dev.sh [--path | -p ] [--headless] [--help | -h]"
-    echo ""
-    echo "Options:"
-    echo "  --path, -p ROSBAGS_DIR_PATH"
-    echo "                 Specify path to store recorded rosbags"
-    echo "  --headless     Run the Docker image without X11 forwarding"
-    echo "  --help, -h     Display this help message and exit."
-    echo ""
+    echo "
+Usage: dev.sh [-l|--local] [--path | -p ] [--headless] [--help | -h]
+
+Options:
+    -l | --local    Use default local cyclone_dds.xml config
+                    Optionally point to absolute -l /path/to/cyclone_dds.xml
+    -p | --path   ROSBAGS_DIR_PATH
+                    Specify path to store recorded rosbags
+    --headless      Run the Docker image without X11 forwarding
+    -h | --help     Display this help message and exit.
+    "
+    exit 1
 }
 
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-            # Option to specify path
+        -l|--local)
+            if [[ -n "$2" && "$2" != -* ]]; then
+                CYCLONE_DIR="$2"
+                shift
+            fi
+            CYCLONE_VOL="-v $CYCLONE_DIR:/opt/ros_ws/cyclone_dds.xml"
+            ;;
         -p|--path)
-            if [ -n "$2" ]; then
+            if [[ -n "$2" && "$2" != -* ]]; then
                 ROSBAGS_DIR="$2"
                 shift
             else
@@ -34,9 +48,7 @@ while [[ "$#" -gt 0 ]]; do
             fi
             ;;
         --headless) headless=true ;;
-        -h|--help)
-            usage
-            ;;
+        -h|--help) usage ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -44,6 +56,15 @@ while [[ "$#" -gt 0 ]]; do
     esac
     shift
 done
+
+
+# Verify CYCLONE_DIR exists
+if [ -n "$CYCLONE_VOL" ]; then
+    if [ ! -f "$CYCLONE_DIR" ]; then
+        echo "$CYCLONE_DIR does not exist! Please provide a valid path to cyclone_dds.xml"
+        exit 1
+    fi
+fi
 
 # Verify ROSBAGS_DIR exists
 if [ ! -d "$ROSBAGS_DIR" ]; then
@@ -73,8 +94,8 @@ docker run -it --rm --net host --privileged \
     -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
     -v /dev:/dev \
     -v /tmp:/tmp \
+    $CYCLONE_VOL \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
-    -v $SCRIPT_DIR/cyclone_dds.xml:/opt/ros_ws/cyclone_dds.xml \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
     -v /etc/localtime:/etc/localtime:ro \
