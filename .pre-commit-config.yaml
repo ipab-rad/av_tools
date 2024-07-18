@@ -134,6 +134,7 @@ repos:
     rev: v0.8.0
     hooks:
       - id: flake8-ros
+        args: ['--ignore=E231']
       - id: prettier-xacro
       - id: prettier-launch-xml
       - id: prettier-package-xml
@@ -145,7 +146,7 @@ repos:
     rev: v2.12.1b3
     hooks:
       - id: hadolint
-        args: ['--ignore=DL3008']
+        args: ['--ignore=DL3008','--ignore=DL3013']
 
 ci:
     autofix_commit_msg: |

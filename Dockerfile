@@ -22,10 +22,14 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-rmw-cyclonedds-cpp \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
+        ros-"$ROS_DISTRO"-geographic-msgs \
+        python3-pip \
+        python3-vcstool \
+    && pip install --no-cache-dir mcap colorama \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
-ENV ROS_WS /opt/ros_ws
+ENV ROS_WS=/opt/ros_ws
 WORKDIR $ROS_WS
 
 # Set cyclone DDS ROS RMW
@@ -49,6 +53,21 @@ RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
     #    convenience when running interactively
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
 
+# Create dep_ws
+ENV DEP_WS=/opt/dep_ws
+WORKDIR $DEP_WS
+
+# Clone repos and build autoware msgs
+COPY autoware_msgs.repos $DEP_WS/
+RUN mkdir src && vcs import src < autoware_msgs.repos \
+    && . /opt/ros/"$ROS_DISTRO"/setup.sh \
+    && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && rm -rf ./src ./build ./log \
+    && echo "source $DEP_WS/install/setup.bash" >> /root/.bashrc
+
+# Come back to ros_ws
+WORKDIR $ROS_WS
+
 # -----------------------------------------------------------------------
 
 FROM base AS prebuilt
@@ -57,7 +76,7 @@ FROM base AS prebuilt
 
 # -----------------------------------------------------------------------
 
-FROM base AS dev
+FROM prebuilt AS dev
 
 # Install basic dev tools (And clean apt cache afterwards)
 RUN apt-get update \
@@ -69,6 +88,10 @@ RUN apt-get update \
         inetutils-ping \
         # Bash auto-completion for convenience
         bash-completion \
+        # ROS Rqt graph \
+        ros-"$ROS_DISTRO"-rqt-graph \
+        # Plot juggler
+        ros-"$ROS_DISTRO"-plotjuggler-ros \
     && rm -rf /var/lib/apt/lists/*
 
 # Add colcon build alias for convenience
@@ -81,7 +104,7 @@ CMD ["bash"]
 
 # -----------------------------------------------------------------------
 
-FROM base as runtime
+FROM base AS runtime
 
 # Start recording a rosbag by default
-CMD ["/opt/ros_ws/container_tools/record_rosbag.sh"]
+CMD ["/opt/ros_ws/container_tools/record_rosbag.sh", "/opt/ros_ws/config/sensor_topics.txt"]

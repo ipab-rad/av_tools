@@ -3,21 +3,43 @@
 # Build docker dev stage and add local code for live development
 # ----------------------------------------------------------------
 
+CYCLONE_VOL=""
+
+# Default cyclone_dds.xml path
+CYCLONE_DIR=/home/$USER/cyclone_dds.xml
 # Default in-vehicle rosbags directory
 ROSBAGS_DIR=/recorded_datasets/edinburgh
+# Default value for headless
+headless=false
 
 # Function to print usage
 usage() {
-    echo "Usage: dev.sh [-p|--path <absolute path to store rosbags>]"
+    echo "
+Usage: dev.sh [-l|--local] [--path | -p ] [--headless] [--help | -h]
+
+Options:
+    -l | --local    Use default local cyclone_dds.xml config
+                    Optionally point to absolute -l /path/to/cyclone_dds.xml
+    -p | --path   ROSBAGS_DIR_PATH
+                    Specify path to store recorded rosbags
+    --headless      Run the Docker image without X11 forwarding
+    -h | --help     Display this help message and exit.
+    "
     exit 1
 }
 
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-            # Option to specify path
+        -l|--local)
+            if [[ -n "$2" && "$2" != -* ]]; then
+                CYCLONE_DIR="$2"
+                shift
+            fi
+            CYCLONE_VOL="-v $CYCLONE_DIR:/opt/ros_ws/cyclone_dds.xml"
+            ;;
         -p|--path)
-            if [ -n "$2" ]; then
+            if [[ -n "$2" && "$2" != -* ]]; then
                 ROSBAGS_DIR="$2"
                 shift
             else
@@ -25,9 +47,8 @@ while [[ "$#" -gt 0 ]]; do
                 usage
             fi
             ;;
-        -h|--help)
-            usage
-            ;;
+        --headless) headless=true ;;
+        -h|--help) usage ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -36,12 +57,27 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+
+# Verify CYCLONE_DIR exists
+if [ -n "$CYCLONE_VOL" ]; then
+    if [ ! -f "$CYCLONE_DIR" ]; then
+        echo "$CYCLONE_DIR does not exist! Please provide a valid path to cyclone_dds.xml"
+        exit 1
+    fi
+fi
+
 # Verify ROSBAGS_DIR exists
 if [ ! -d "$ROSBAGS_DIR" ]; then
     echo "$ROSBAGS_DIR does not exist! Please provide a valid path to store rosbags"
     exit 1
 fi
 
+
+MOUNT_X=""
+if [ "$headless" = "false" ]; then
+    MOUNT_X="-e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix"
+    xhost + >/dev/null
+fi
 
 # Build docker image up to dev stage
 DOCKER_BUILDKIT=1 docker build \
@@ -53,7 +89,12 @@ SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 # Run docker image with local code volumes for development
 docker run -it --rm --net host --privileged \
-    -v /dev/shm:/dev/shm \
+    ${MOUNT_X} \
+    -e XAUTHORITY="${XAUTHORITY}" \
+    -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+    -v /dev:/dev \
+    -v /tmp:/tmp \
+    $CYCLONE_VOL \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
