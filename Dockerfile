@@ -47,6 +47,9 @@ ENV RCUTILS_COLORIZED_OUTPUT=1
 COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
 
+# Set tools autocomplete
+RUN echo "source $ROS_WS/container_tools/_tools_autocomplete.sh" >> /root/.bashrc
+
 # Add tools to PATH
 RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
     # Add sourcing local workspace command to bashrc for

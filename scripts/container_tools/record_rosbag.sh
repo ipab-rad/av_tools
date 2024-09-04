@@ -26,7 +26,7 @@ help() {
     exit 0
 }
 
-TOPICS_LIST_FILE="$ROS_WS/config/all_sensor_topics.txt"
+TOPICS_LIST_FILE="$ROS_WS/config/recording_presets/all_sensor_topics.txt"
 ROSBAG_SUFFIX="all_sensors_recording"
 RECORD_ALL=""
 MAX_CACHE_SIZE="5000000000"
