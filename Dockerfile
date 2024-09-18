@@ -47,6 +47,9 @@ ENV RCUTILS_COLORIZED_OUTPUT=1
 COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
 
+# Set tools autocomplete
+RUN echo "source $ROS_WS/container_tools/_tools_autocomplete.sh" >> /root/.bashrc
+
 # Add tools to PATH
 RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
     # Add sourcing local workspace command to bashrc for
@@ -107,4 +110,4 @@ CMD ["bash"]
 FROM base AS runtime
 
 # Start recording a rosbag by default
-CMD ["/opt/ros_ws/container_tools/record_rosbag.sh", "/opt/ros_ws/config/sensor_topics.txt"]
+CMD ["/opt/ros_ws/container_tools/record_rosbag.sh"]

@@ -1,0 +1,8 @@
+/joint_states
+/robot_description
+/sensor/camera/rspr_r/camera_info
+/sensor/camera/rspr_r/image_rect_color/compressed
+/sensor/camera/rspr_r/meta
+/sensor/lidar/top/points
+/tf
+/tf_static

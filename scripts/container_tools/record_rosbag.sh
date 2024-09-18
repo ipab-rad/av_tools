@@ -13,27 +13,34 @@ DATE_PREFIX=$(date "+%Y_%m_%d-%H_%M_%S")
 
 # Function to display help
 help() {
-    echo "Usage: record_rosbag.sh [options] [path-to-topics-list-file.txt]"
-    echo ""
-    echo "Options:"
-    echo "  -n, --name    Set the rosbag name (default is 'sensor_recording')."
-    echo "  -h, --help    Display this help message and exit."
-    echo ""
-    echo "Examples:"
-    echo "  record_rosbag.sh  -n custom_name topics_list.txt"
-    echo "  record_rosbag.sh  --name custom_name topics_list.txt"
-    echo "  record_rosbag.sh  topics_list.yaml"
-    echo "  record_rosbag.sh  (record all topics)"
+    echo "Usage: record_rosbag.sh [options]
+
+    Options:
+    --all       Record all available topics
+    -f, --file TOPIC_LIST.txt
+                Specify topic list file (Default: all_sensor_topics.txt)
+    -n, --name ROSBAG_NAME
+                Set the rosbag name (Default: all_sensors_recording).
+    -h, --help  Display this help message and exit.
+    "
     exit 0
 }
 
-# Initialize variables
-TOPICS_LIST_FILE=""
-ROSBAG_SUFFIX="sensor_recording"
+TOPICS_LIST_FILE="$ROS_WS/config/recording_presets/all_sensor_topics.txt"
+ROSBAG_SUFFIX="all_sensors_recording"
+RECORD_ALL=""
+MAX_CACHE_SIZE="5000000000"
+MAX_BAG_SIZE="10740000000"
 
-# Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
+        --all)
+            RECORD_ALL="YES"
+            ;;
+        -f|--file)
+            TOPICS_LIST_FILE="$2"
+            shift
+            ;;
         -n|--name)
             ROSBAG_SUFFIX="$2"
             shift
@@ -42,19 +49,24 @@ while [[ "$#" -gt 0 ]]; do
             help
             ;;
         *)
-            TOPICS_LIST_FILE="$1"
+            echo "Unsupported flag"
+            help
             ;;
     esac
     shift
 done
 
-# Define default behavior if no file is provided
-if [ -z "$TOPICS_LIST_FILE" ]; then
-    echo -e "No topics list file provided. ${CYAN}Recording all topics.${NO_COLOR}"
-    ros2 bag record -s mcap --all --max-cache-size 5000000000 \
+if [ ! -z "$RECORD_ALL" ]; then
+    echo -e "${CYAN}Recording all topics.${NO_COLOR}"
+
+    ROSBAG_PATH="$OUTPUT_DIR/${DATE_PREFIX}_all_topics"
+
+    ros2 bag record -s mcap --all --max-cache-size $MAX_CACHE_SIZE \
         --storage-config-file "$ROS_WS/config/mcap_cfg.yaml" \
-        -b 10740000000 \
-        -o "$OUTPUT_DIR/${DATE_PREFIX}_all_topics"
+        -b $MAX_BAG_SIZE \
+        -o "$ROSBAG_PATH"
+
+    echo -e "Recording saved in: ${CYAN}${ROSBAG_PATH}${NO_COLOR}"
     exit 0
 fi
 
@@ -67,14 +79,17 @@ fi
 # Read topics into an array
 readarray -t TOPICS < "$TOPICS_LIST_FILE"
 
-# Start recording the topics
+ROSBAG_PATH="${OUTPUT_DIR}/${DATE_PREFIX}_${ROSBAG_SUFFIX}"
+
 if [ ${#TOPICS[@]} -eq 0 ]; then
     echo "No topics found in the file. Stopping recording."
     exit 1
 else
     echo -e "Recording topics from ${MAGENTA}$TOPICS_LIST_FILE${NO_COLOR}"
-    ros2 bag record -s mcap --max-cache-size 5000000000 \
+    ros2 bag record -s mcap --max-cache-size $MAX_CACHE_SIZE \
         --storage-config-file "$ROS_WS/config/mcap_cfg.yaml" \
-        -b 10740000000 \
-        -o "$OUTPUT_DIR/${DATE_PREFIX}_${ROSBAG_SUFFIX}" "${TOPICS[@]}"
+        -b $MAX_BAG_SIZE \
+        -o $ROSBAG_PATH "${TOPICS[@]}"
 fi
+
+echo -e "Recording saved in: ${CYAN}${ROSBAG_PATH}${NO_COLOR}"
