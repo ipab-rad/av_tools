@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""This script reads MCAP files to summarize sensor data message losses."""
+"""This script reads MCAP files to summarise sensor data message losses."""
 
 import argparse
 import os
@@ -11,27 +11,63 @@ from colorama import Fore, Style
 from mcap.reader import make_reader
 
 # Sensors frequencies
-cameras_freq = 20
+cameras_freq = 20.0
 velodynes_freq = 9.92
-ouster_freq = 10
+ouster_freq = 10.0
+gps_freq = 20.0
+imu_freq = 200.0
+tf_freq = 10.0
+radars_freq = 13.8
 
 # Topics frequencies dict
 topic_frequencies = {
+    '/sensor/camera/fsp_l/camera_info': cameras_freq,
     '/sensor/camera/fsp_l/image_raw': cameras_freq,
     '/sensor/camera/fsp_l/image_rect_color': cameras_freq,
-    '/sensor/camera/lspr_l/image_raw': cameras_freq,
-    '/sensor/camera/lspr_l/image_rect_color': cameras_freq,
+    '/sensor/camera/fsp_l/image_rect_color/compressed': cameras_freq,
+    '/sensor/camera/lspf_r/camera_info': cameras_freq,
     '/sensor/camera/lspf_r/image_raw': cameras_freq,
     '/sensor/camera/lspf_r/image_rect_color': cameras_freq,
+    '/sensor/camera/lspf_r/image_rect_color/compressed': cameras_freq,
+    '/sensor/camera/lspr_l/camera_info': cameras_freq,
+    '/sensor/camera/lspr_l/image_raw': cameras_freq,
+    '/sensor/camera/lspr_l/image_rect_color': cameras_freq,
+    '/sensor/camera/lspr_l/image_rect_color/compressed': cameras_freq,
+    '/sensor/camera/rsp_l/camera_info': cameras_freq,
     '/sensor/camera/rsp_l/image_raw': cameras_freq,
     '/sensor/camera/rsp_l/image_rect_color': cameras_freq,
+    '/sensor/camera/rsp_l/image_rect_color/compressed': cameras_freq,
+    '/sensor/camera/rspf_l/camera_info': cameras_freq,
     '/sensor/camera/rspf_l/image_raw': cameras_freq,
     '/sensor/camera/rspf_l/image_rect_color': cameras_freq,
+    '/sensor/camera/rspf_l/image_rect_color/compressed': cameras_freq,
+    '/sensor/camera/rspr_r/camera_info': cameras_freq,
     '/sensor/camera/rspr_r/image_raw': cameras_freq,
     '/sensor/camera/rspr_r/image_rect_color': cameras_freq,
+    '/sensor/camera/rspr_r/image_rect_color/compressed': cameras_freq,
+    '/sensor/gps/nav_sat_fix': gps_freq,
+    '/sensor/imu/data': imu_freq,
     '/sensor/lidar/left/points': velodynes_freq,
     '/sensor/lidar/right/points': velodynes_freq,
     '/sensor/lidar/top/points': ouster_freq,
+    '/sensor/radar/bumper_front_centre/far/image': radars_freq,
+    '/sensor/radar/bumper_front_centre/near/image': radars_freq,
+    '/sensor/radar/bumper_front_left/far/image': radars_freq,
+    '/sensor/radar/bumper_front_left/near/image': radars_freq,
+    '/sensor/radar/bumper_front_right/far/image': radars_freq,
+    '/sensor/radar/bumper_front_right/near/image': radars_freq,
+    '/sensor/radar/bumper_rear_centre/far/image': radars_freq,
+    '/sensor/radar/bumper_rear_centre/near/image': radars_freq,
+    '/sensor/radar/roof_left_front/far/image': radars_freq,
+    '/sensor/radar/roof_left_front/near/image': radars_freq,
+    '/sensor/radar/roof_left_rear/far/image': radars_freq,
+    '/sensor/radar/roof_left_rear/near/image': radars_freq,
+    '/sensor/radar/roof_right_front/far/image': radars_freq,
+    '/sensor/radar/roof_right_front/near/image': radars_freq,
+    '/sensor/radar/roof_right_rear/far/image': radars_freq,
+    '/sensor/radar/roof_right_rear/near/image': radars_freq,
+    '/tf': tf_freq,
+    '/tf_static': tf_freq,
 }
 
 topics_summary_dict = OrderedDict()
@@ -55,6 +91,10 @@ def get_mcap_summary(mcap_file_path):
         end_time_ns = mcap.statistics.message_end_time
         # Calculate duration in seconds
         duration_sec = (end_time_ns - start_time_ns) / 1e9
+        # Max topic length to order print summary
+        max_len = max(
+            len(topic_name) for topic_name in topic_frequencies.keys()
+        )
 
         topic_summaries = {}
         for idx, channel in mcap.channels.items():
@@ -83,15 +123,15 @@ def get_mcap_summary(mcap_file_path):
                     # We have more msgs
                     color = Fore.LIGHTYELLOW_EX
 
-                color_highlight = Fore.LIGHTWHITE_EX
+                color_high = Fore.LIGHTWHITE_EX
 
                 msg_time_loss = f'{msg_time_loss:.2f}'
 
                 topic_summary = (
-                    f'{color_highlight}{topic_name:40}{Style.RESET_ALL}'
-                    f'count: {msg_count:4}\t'
-                    f'expected_count: {expected_msg_count:4}\t'
-                    f'msgs_lost: {color}{msg_count_loss} '
+                    f'{color_high}{topic_name:<{max_len}}{Style.RESET_ALL}\t'
+                    f'count: {msg_count:3}\t'
+                    f'exp_count: {expected_msg_count:3}\t'
+                    f'msgs_lost: {color}{msg_count_loss:4}'
                     f'({msg_time_loss:3} ms){Style.RESET_ALL}'
                 )
 
