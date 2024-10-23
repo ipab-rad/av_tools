@@ -100,6 +100,7 @@ def get_mcap_summary(mcap_file_path):
         topic_summaries = {}
         for idx, channel in mcap.channels.items():
             topic_name = channel.topic
+            msg_count = 0
             if idx in mcap.statistics.channel_message_counts:
                 msg_count = mcap.statistics.channel_message_counts[idx]
 
@@ -133,7 +134,7 @@ def get_mcap_summary(mcap_file_path):
                     f'count: {msg_count:3}\t'
                     f'exp_count: {expected_msg_count:3}\t'
                     f'msgs_lost: {color}{msg_count_loss:4}'
-                    f'({msg_time_loss:3} ms){Style.RESET_ALL}'
+                    f' ({msg_time_loss:3} ms){Style.RESET_ALL}'
                 )
 
                 topic_summaries[topic_name] = topic_summary
