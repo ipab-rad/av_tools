@@ -15,7 +15,7 @@ cameras_freq = 20.0
 velodynes_freq = 9.92
 ouster_freq = 10.0
 gps_freq = 20.0
-imu_freq = 200.0
+imus_freq = 200.0
 tf_freq = 10.0
 radars_freq = 13.8
 
@@ -46,7 +46,8 @@ topic_frequencies = {
     '/sensor/camera/rspr_r/image_rect_color': cameras_freq,
     '/sensor/camera/rspr_r/image_rect_color/compressed': cameras_freq,
     '/sensor/gps/nav_sat_fix': gps_freq,
-    '/sensor/imu/data': imu_freq,
+    '/sensor/imu/front/data': imus_freq,
+    '/sensor/imu/rear/data': imus_freq,
     '/sensor/lidar/left/points': velodynes_freq,
     '/sensor/lidar/right/points': velodynes_freq,
     '/sensor/lidar/top/points': ouster_freq,
