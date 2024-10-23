@@ -53,9 +53,10 @@
 /sensor/gps/insstdev
 /sensor/gps/nav_sat_fix
 /sensor/gps/psrdop2
-/sensor/imu/data
-/sensor/imu/ekf/status
-/sensor/imu/nmea
+/sensor/imu/front/data
+/sensor/imu/front/ekf/status
+/sensor/imu/rear/data
+/sensor/imu/rear/ekf/status
 /sensor/lidar/left/points
 /sensor/lidar/right/points
 /sensor/lidar/top/points

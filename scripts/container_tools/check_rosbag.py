@@ -15,7 +15,7 @@ cameras_freq = 20.0
 velodynes_freq = 9.92
 ouster_freq = 10.0
 gps_freq = 20.0
-imu_freq = 200.0
+imus_freq = 200.0
 tf_freq = 10.0
 radars_freq = 13.8
 
@@ -46,7 +46,8 @@ topic_frequencies = {
     '/sensor/camera/rspr_r/image_rect_color': cameras_freq,
     '/sensor/camera/rspr_r/image_rect_color/compressed': cameras_freq,
     '/sensor/gps/nav_sat_fix': gps_freq,
-    '/sensor/imu/data': imu_freq,
+    '/sensor/imu/front/data': imus_freq,
+    '/sensor/imu/rear/data': imus_freq,
     '/sensor/lidar/left/points': velodynes_freq,
     '/sensor/lidar/right/points': velodynes_freq,
     '/sensor/lidar/top/points': ouster_freq,
@@ -99,6 +100,7 @@ def get_mcap_summary(mcap_file_path):
         topic_summaries = {}
         for idx, channel in mcap.channels.items():
             topic_name = channel.topic
+            msg_count = 0
             if idx in mcap.statistics.channel_message_counts:
                 msg_count = mcap.statistics.channel_message_counts[idx]
 
@@ -132,7 +134,7 @@ def get_mcap_summary(mcap_file_path):
                     f'count: {msg_count:3}\t'
                     f'exp_count: {expected_msg_count:3}\t'
                     f'msgs_lost: {color}{msg_count_loss:4}'
-                    f'({msg_time_loss:3} ms){Style.RESET_ALL}'
+                    f' ({msg_time_loss:3} ms){Style.RESET_ALL}'
                 )
 
                 topic_summaries[topic_name] = topic_summary
