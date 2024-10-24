@@ -23,6 +23,7 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
         ros-"$ROS_DISTRO"-geographic-msgs \
+        ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
     && pip install --no-cache-dir mcap colorama \

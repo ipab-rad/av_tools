@@ -10,6 +10,7 @@ BASH_CMD=""
 CYCLONE_DIR=/home/$USER/cyclone_dds.xml
 # Default in-vehicle rosbags directory
 ROSBAGS_DIR=/recorded_datasets/edinburgh
+CHECK_PATH=true
 
 # Function to print usage
 usage() {
@@ -18,6 +19,7 @@ Usage: runtime.sh [-b|bash] [-l|--local] [--path | -p ] [--help | -h]
 
 Options:
     -b | bash       Open bash in docker container
+    -f | --foxglove Run Foxglove bridge instead of recording a bag
     -l | --local    Use default local cyclone_dds.xml config
                     Optionally point to absolute -l /path/to/cyclone_dds.xml
     -p | --path   ROSBAGS_DIR_PATH
@@ -41,6 +43,10 @@ while [[ "$#" -gt 0 ]]; do
                 shift
             fi
             CYCLONE_VOL="-v $CYCLONE_DIR:/opt/ros_ws/cyclone_dds.xml"
+            ;;
+        -f|--foxglove)
+            BASH_CMD=/opt/ros_ws/container_tools/foxglove_bridge.sh
+            CHECK_PATH=false
             ;;
         -p|--path)
             if [[ -n "$2" && "$2" != -* ]]; then
@@ -71,7 +77,7 @@ if [ -n "$CYCLONE_VOL" ]; then
 fi
 
 # Verify ROSBAGS_DIR exists
-if [ ! -d "$ROSBAGS_DIR" ]; then
+if [ ! -d "$ROSBAGS_DIR" -a "$CHECK_PATH" = true ]; then
     echo "$ROSBAGS_DIR does not exist! Please provide a valid path to store rosbags"
     exit 1
 fi
