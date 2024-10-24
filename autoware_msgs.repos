@@ -4,7 +4,7 @@ repositories:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
     version: tier4/universe
-#  TODO: Check if really needed when compiling Autoware, we aim to use Carla sim 
+#  TODO: Check if really needed when compiling Autoware, we aim to use Carla sim
 #  morai_msgs:
 #    type: git
 #    url: https://github.com/MORAI-Autonomous/MORAI-ROS2_morai_msgs.git
