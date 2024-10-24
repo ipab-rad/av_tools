@@ -1,26 +1,11 @@
 repositories:
   # core
-  autoware_msgs:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_msgs.git
-    version: main
-  autoware_adapi_msgs:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_adapi_msgs.git
-    version: main
-  autoware_internal_msgs:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_internal_msgs.git
-    version: main
-  autoware_auto_msgs: # TODO(mfc): Remove when autoware_msgs is merged
-    type: git
-    url: https://github.com/tier4/autoware_auto_msgs.git
-    version: tier4/main
   tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
     version: tier4/universe
-  morai_msgs:
-    type: git
-    url: https://github.com/MORAI-Autonomous/MORAI-ROS2_morai_msgs.git
-    version: main
+#  TODO: Check if really needed when compiling Autoware, we aim to use Carla sim 
+#  morai_msgs:
+#    type: git
+#    url: https://github.com/MORAI-Autonomous/MORAI-ROS2_morai_msgs.git
+#    version: main
