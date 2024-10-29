@@ -49,13 +49,13 @@ COPY scripts/container_tools $ROS_WS/container_tools
 COPY config                  $ROS_WS/config
 
 # Set tools autocomplete
-RUN echo "source $ROS_WS/container_tools/_tools_autocomplete.sh" >> /root/.bashrc
+RUN echo "source $ROS_WS/container_tools/_tools_autocomplete.sh" >> /etc/bash.bashrc
 
 # Add tools to PATH
-RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /root/.bashrc &&\
+RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /etc/bash.bashrc &&\
     # Add sourcing local workspace command to bashrc for
     #    convenience when running interactively
-    echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc
+    echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /etc/bash.bashrc
 
 # Create dep_ws
 ENV DEP_WS=/opt/dep_ws
@@ -67,10 +67,20 @@ RUN mkdir src && vcs import src < autoware_msgs.repos \
     && . /opt/ros/"$ROS_DISTRO"/setup.sh \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && rm -rf ./src ./build ./log \
-    && echo "source $DEP_WS/install/setup.bash" >> /root/.bashrc
+    && echo "source $DEP_WS/install/setup.bash" >> /etc/bash.bashrc
 
 # Come back to ros_ws
 WORKDIR $ROS_WS
+
+# Create username
+ARG USER_ID
+ARG GROUP_ID
+ARG USERNAME=lxo
+
+RUN groupadd -g $GROUP_ID $USERNAME && \
+    useradd -u $USER_ID -g $GROUP_ID -m -l $USERNAME && \
+    usermod -aG sudo $USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # -----------------------------------------------------------------------
 
@@ -101,7 +111,7 @@ RUN apt-get update \
 # Add colcon build alias for convenience
 RUN echo 'alias colcon_build="colcon build --symlink-install \
     --cmake-args -DCMAKE_BUILD_TYPE=Release && \
-    source install/setup.bash"' >> /root/.bashrc
+    source install/setup.bash"' >> /etc/bash.bashrc
 
 # Enter bash for clvelopment
 CMD ["bash"]

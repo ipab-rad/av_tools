@@ -82,13 +82,17 @@ if [ ! -d "$ROSBAGS_DIR" -a "$CHECK_PATH" = true ]; then
     exit 1
 fi
 
-# Build docker image only up to base stage
-DOCKER_BUILDKIT=1 docker build \
+# Build docker image only up to runtime stage
+docker build \
+    --build-arg USER_ID=$(id -u) \
+    --build-arg GROUP_ID=$(id -g) \
+    --build-arg USERNAME=$(whoami) \
     -t av_tools:latest \
     -f Dockerfile --target runtime .
 
 # Run docker image
 docker run -it --rm --net host --privileged \
+    --user "$(id -u):$(id -g)" \
     -v /dev:/dev \
     -v /tmp:/tmp \
     $CYCLONE_VOL \
