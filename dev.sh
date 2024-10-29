@@ -80,7 +80,10 @@ if [ "$headless" = "false" ]; then
 fi
 
 # Build docker image up to dev stage
-DOCKER_BUILDKIT=1 docker build \
+docker build \
+    --build-arg USER_ID=$(id -u) \
+    --build-arg GROUP_ID=$(id -g) \
+    --build-arg USERNAME=$(whoami) \
     -t av_tools:latest-dev \
     -f Dockerfile --target dev .
 
@@ -89,6 +92,7 @@ SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 # Run docker image with local code volumes for development
 docker run -it --rm --net host --privileged \
+    --user "$(id -u):$(id -g)" \
     ${MOUNT_X} \
     -e XAUTHORITY="${XAUTHORITY}" \
     -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
