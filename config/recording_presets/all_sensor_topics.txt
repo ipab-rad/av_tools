@@ -29,8 +29,10 @@
 /sensor/gps/bestpos
 /sensor/gps/bestvel
 /sensor/gps/corrimudata
+/sensor/gps/dual_antenna_heading
 /sensor/gps/gps_fix
 /sensor/gps/gps_sync
+/sensor/gps/heading2
 /sensor/gps/imu
 /sensor/gps/inscov
 /sensor/gps/inspva
