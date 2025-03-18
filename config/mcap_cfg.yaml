@@ -5,7 +5,7 @@ noSummaryCRC: false
 noChunking: false
 noMessageIndex: false
 noSummary: false
-chunkSize: 786432
+chunkSize: 62914560 # 60 MiB
 compression: "None"
 compressionLevel: "Default"
 forceCompression: false
