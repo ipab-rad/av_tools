@@ -26,7 +26,7 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
-    && pip install --no-cache-dir mcap colorama \
+    && pip install --no-cache-dir mcap colorama requests \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup ROS workspace folder
