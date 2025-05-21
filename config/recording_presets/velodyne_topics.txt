@@ -1,0 +1,10 @@
+/diagnostics
+/joint_states
+/robot_description
+/sensor/lidar/left/points
+/sensor/lidar/left/velodyne_packets
+/sensor/lidar/right/points
+/sensor/lidar/right/velodyne_packets
+/sensor/lidar/top/points
+/tf
+/tf_static

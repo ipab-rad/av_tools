@@ -1,0 +1,7 @@
+/rosout
+/sensor/camera/rspf_l/camera_info
+/sensor/camera/rspf_l/image_raw
+/sensor/camera/rspf_l/meta
+/sensor/camera/rspr_r/camera_info
+/sensor/camera/rspr_r/image_raw
+/sensor/camera/rspr_r/meta
