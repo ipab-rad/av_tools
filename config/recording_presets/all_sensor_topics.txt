@@ -45,6 +45,7 @@
 /sensor/lidar/left/points
 /sensor/lidar/right/points
 /sensor/lidar/top/points
+/sensor/lidar/front/points
 /sensor/radar/bumper_front_centre/far/image
 /sensor/radar/bumper_front_centre/near/image
 /sensor/radar/bumper_front_left/far/image
