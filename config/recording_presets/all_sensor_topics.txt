@@ -6,6 +6,10 @@
 /sensor/camera/fsp_l/image_raw
 /sensor/camera/fsp_l/image_rect_color/compressed
 /sensor/camera/fsp_l/meta
+/sensor/camera/fsp_r/camera_info
+/sensor/camera/fsp_r/image_raw
+/sensor/camera/fsp_r/image_rect_color/compressed
+/sensor/camera/fsp_r/meta
 /sensor/camera/lspf_r/camera_info
 /sensor/camera/lspf_r/image_raw
 /sensor/camera/lspf_r/image_rect_color/compressed
@@ -18,6 +22,10 @@
 /sensor/camera/rsp_l/image_raw
 /sensor/camera/rsp_l/image_rect_color/compressed
 /sensor/camera/rsp_l/meta
+/sensor/camera/rsp_r/camera_info
+/sensor/camera/rsp_r/image_raw
+/sensor/camera/rsp_r/image_rect_color/compressed
+/sensor/camera/rsp_r/meta
 /sensor/camera/rspf_l/camera_info
 /sensor/camera/rspf_l/image_raw
 /sensor/camera/rspf_l/image_rect_color/compressed
