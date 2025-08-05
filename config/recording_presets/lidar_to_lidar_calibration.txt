@@ -1,0 +1,9 @@
+/diagnostics
+/sensor/imu/front/data
+/sensor/imu/rear/data
+/sensor/lidar/left/points
+/sensor/lidar/right/points
+/sensor/lidar/front/points
+/sensor/lidar/top/points
+/tf
+/tf_static
