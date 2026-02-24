@@ -1,6 +1,5 @@
 /diagnostics
 /joint_states
-/pdk/dynamic_object_tracking/markers
 /robot_description
 /sensor/bms/battery_state
 /sensor/camera/fsp_l/camera_info
