@@ -8,7 +8,7 @@ CYCLONE_VOL=""
 # Default cyclone_dds.xml path
 CYCLONE_DIR=/home/$USER/cyclone_dds.xml
 # Default in-vehicle rosbags directory
-ROSBAGS_DIR=/recorded_datasets/edinburgh
+ROSBAGS_DIR=/mnt/sata_ssd_raid/edinburgh
 # Default value for headless
 headless=false
 
@@ -102,5 +102,6 @@ docker run -it --rm --net host --privileged \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/scripts/container_tools:/opt/ros_ws/container_tools \
     -v $SCRIPT_DIR/config:/opt/ros_ws/config \
+    -v $SCRIPT_DIR/deps:/opt/ros_ws/deps \
     -v /etc/localtime:/etc/localtime:ro \
     av_tools:latest-dev

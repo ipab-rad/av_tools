@@ -1,5 +1,8 @@
 FROM ros:humble-ros-base-jammy AS base
 
+# First copy msg deps so they are available
+COPY ./deps /opt/ros_ws/deps
+
 # Install key dependencies
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
@@ -26,6 +29,8 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
+        # Install locally imported dependencies
+        ./opt/ros_ws/deps/* \
     && pip install --no-cache-dir mcap colorama \
     && rm -rf /var/lib/apt/lists/*
 

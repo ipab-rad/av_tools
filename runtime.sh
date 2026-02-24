@@ -97,5 +97,6 @@ docker run -it --rm --net host --privileged \
     -v /tmp:/tmp \
     $CYCLONE_VOL \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
+    -v $SCRIPT_DIR/deps:/opt/ros_ws/deps \
     -v /etc/localtime:/etc/localtime:ro \
     av_tools:latest $BASH_CMD
