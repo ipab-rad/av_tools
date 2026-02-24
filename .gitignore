@@ -1,2 +1,5 @@
 # Ignore ROS bag dir
 rosbags/
+
+# Ignore debs deps dir
+deps/
