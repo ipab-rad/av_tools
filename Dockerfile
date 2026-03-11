@@ -22,13 +22,14 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-novatel-gps-msgs \
         ros-"$ROS_DISTRO"-ouster-msgs \
         ros-"$ROS_DISTRO"-radar-msgs \
-        ros-"$ROS_DISTRO"-rmw-cyclonedds-cpp \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
         ros-"$ROS_DISTRO"-geographic-msgs \
         ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
+        # Install Zenoh ROS2 RMW
+        ros-"$ROS_DISTRO"-rmw-zenoh-cpp \
         # Install locally imported dependencies
         ./opt/ros_ws/deps/* \
     && pip install --no-cache-dir mcap colorama \
@@ -38,13 +39,8 @@ RUN apt-get update \
 ENV ROS_WS=/opt/ros_ws
 WORKDIR $ROS_WS
 
-# Set cyclone DDS ROS RMW
-ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-
-COPY ./cyclone_dds.xml $ROS_WS/
-
-# Configure Cyclone cfg file
-ENV CYCLONEDDS_URI=file://${ROS_WS}/cyclone_dds.xml
+# Setup Zenoh ROS2 RMW
+ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp
 
 # Enable ROS log colorised output
 ENV RCUTILS_COLORIZED_OUTPUT=1

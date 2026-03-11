@@ -3,11 +3,8 @@
 # Build docker image and run ROS code for runtime or interactively with bash
 # ---------------------------------------------------------------------------
 
-CYCLONE_VOL=""
 BASH_CMD=""
 
-# Default cyclone_dds.xml path
-CYCLONE_DIR=/home/$USER/cyclone_dds.xml
 # Default in-vehicle rosbags directory
 ROSBAGS_DIR=/recorded_datasets/edinburgh
 CHECK_PATH=true
@@ -15,13 +12,11 @@ CHECK_PATH=true
 # Function to print usage
 usage() {
     echo "
-Usage: runtime.sh [-b|bash] [-l|--local] [--path | -p ] [--help | -h]
+Usage: runtime.sh [-b|bash] [--path | -p ] [--help | -h]
 
 Options:
     -b | bash       Open bash in docker container
     -f | --foxglove Run Foxglove bridge instead of recording a bag
-    -l | --local    Use default local cyclone_dds.xml config
-                    Optionally point to absolute -l /path/to/cyclone_dds.xml
     -p | --path   ROSBAGS_DIR_PATH
                     Specify path to store recorded rosbags
     -h | --help     Display this help message and exit.
@@ -37,13 +32,6 @@ while [[ "$#" -gt 0 ]]; do
             BASH_CMD=bash
             ;;
             # Option to specify path
-        -l|--local)
-            if [[ -n "$2" && "$2" != -*  && "$2" != "bash" ]]; then
-                CYCLONE_DIR="$2"
-                shift
-            fi
-            CYCLONE_VOL="-v $CYCLONE_DIR:/opt/ros_ws/cyclone_dds.xml"
-            ;;
         -f|--foxglove)
             BASH_CMD=/opt/ros_ws/container_tools/foxglove_bridge.sh
             CHECK_PATH=false
@@ -68,14 +56,6 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# Verify CYCLONE_DIR exists
-if [ -n "$CYCLONE_VOL" ]; then
-    if [ ! -f "$CYCLONE_DIR" ]; then
-        echo "$CYCLONE_DIR does not exist! Please provide a valid path to cyclone_dds.xml"
-        exit 1
-    fi
-fi
-
 # Verify ROSBAGS_DIR exists
 if [ ! -d "$ROSBAGS_DIR" -a "$CHECK_PATH" = true ]; then
     echo "$ROSBAGS_DIR does not exist! Please provide a valid path to store rosbags"
@@ -95,7 +75,6 @@ docker run -it --rm --net host --privileged \
     --user "$(id -u):$(id -g)" \
     -v /dev:/dev \
     -v /tmp:/tmp \
-    $CYCLONE_VOL \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
     -v $SCRIPT_DIR/deps:/opt/ros_ws/deps \
     -v /etc/localtime:/etc/localtime:ro \
