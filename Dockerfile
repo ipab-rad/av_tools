@@ -1,8 +1,5 @@
 FROM ros:humble-ros-base-jammy AS base
 
-# First copy msg deps so they are available
-COPY ./deps /opt/ros_ws/deps
-
 # Install key dependencies
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
@@ -30,10 +27,15 @@ RUN apt-get update \
         python3-vcstool \
         # Install Zenoh ROS2 RMW
         ros-"$ROS_DISTRO"-rmw-zenoh-cpp \
-        # Install locally imported dependencies
-        ./opt/ros_ws/deps/* \
     && pip install --no-cache-dir mcap colorama \
     && rm -rf /var/lib/apt/lists/*
+
+# Install local dependencies ("|| :" supresses error if no *.deb found)
+COPY ./deps /opt/ros_ws/deps
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive \
+        dpkg -i /opt/ros_ws/deps/*.deb \
+    && rm -rf /var/lib/apt/lists/* || :
 
 # Setup ROS workspace folder
 ENV ROS_WS=/opt/ros_ws
