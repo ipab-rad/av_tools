@@ -76,8 +76,8 @@ RUN mkdir src && vcs import src < autoware_msgs.repos \
 WORKDIR $ROS_WS
 
 # Create username
-ARG USER_ID
-ARG GROUP_ID
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 ARG USERNAME=lxo
 
 RUN groupadd -g $GROUP_ID $USERNAME && \
