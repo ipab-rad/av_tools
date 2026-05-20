@@ -30,7 +30,7 @@ RUN apt-get update \
     && pip install --no-cache-dir mcap colorama \
     && rm -rf /var/lib/apt/lists/*
 
-# Install local dependencies ("|| :" supresses error if no *.deb found)
+# Install local dependencies ("|| :" suppresses error if no *.deb found)
 COPY ./deps /opt/ros_ws/deps
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
