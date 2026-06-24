@@ -1,12 +1,10 @@
-FROM ros:humble-ros-base-jammy AS base
+FROM ros:jazzy-ros-base-noble AS base
 
 # Install key dependencies
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get -y --quiet --no-install-recommends install \
         ros-"$ROS_DISTRO"-can-msgs \
-        ros-"$ROS_DISTRO"-dataspeed-ulc-msgs \
-        ros-"$ROS_DISTRO"-dbw-ford-msgs \
         ros-"$ROS_DISTRO"-ffmpeg-image-transport \
         ros-"$ROS_DISTRO"-flir-camera-msgs \
         ros-"$ROS_DISTRO"-foxglove-bridge \
@@ -17,7 +15,6 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-microstrain-inertial-msgs \
         ros-"$ROS_DISTRO"-nmea-msgs \
         ros-"$ROS_DISTRO"-novatel-gps-msgs \
-        ros-"$ROS_DISTRO"-ouster-msgs \
         ros-"$ROS_DISTRO"-radar-msgs \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
@@ -25,9 +22,10 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
+        python3-colorama \
         # Install Zenoh ROS2 RMW
         ros-"$ROS_DISTRO"-rmw-zenoh-cpp \
-    && pip install --no-cache-dir mcap colorama \
+    && pip install --no-cache-dir --break-system-packages mcap \
     && rm -rf /var/lib/apt/lists/*
 
 # Install local dependencies ("|| :" suppresses error if no *.deb found)
@@ -64,9 +62,17 @@ RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /etc/bash.bashrc &&\
 ENV DEP_WS=/opt/dep_ws
 WORKDIR $DEP_WS
 
+# Clone Humble Dataspeed repos, to be compiled in Jazzy
+RUN git clone https://bitbucket.org/DataspeedInc/dbw_ros.git /opt/dbw_ros
+
+# Move to src only necessary pkgs
+RUN mkdir -p $DEP_WS/src \
+ && mv /opt/dbw_ros/dbw1/dataspeed_ulc_msgs $DEP_WS/src/ \
+ && mv /opt/dbw_ros/dbw1/dbw_ford_msgs $DEP_WS/src/
+
 # Clone repos and build autoware msgs
 COPY autoware_msgs.repos $DEP_WS/
-RUN mkdir src && vcs import src < autoware_msgs.repos \
+RUN vcs import src < autoware_msgs.repos \
     && . /opt/ros/"$ROS_DISTRO"/setup.sh \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && rm -rf ./src ./build ./log \
@@ -79,6 +85,9 @@ WORKDIR $ROS_WS
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=lxo
+
+# Remove annoying default ubuntu user with conflicting id
+RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
 
 RUN groupadd -g $GROUP_ID $USERNAME && \
     useradd -u $USER_ID -g $GROUP_ID -m -l $USERNAME && \
