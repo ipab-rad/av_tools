@@ -70,6 +70,9 @@ docker build \
     -t av_tools:latest \
     -f Dockerfile --target runtime .
 
+# Get the absolute path of the script
+SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+
 # Run docker image
 docker run -it --rm --net host --privileged \
     --user "$(id -u):$(id -g)" \
