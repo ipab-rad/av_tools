@@ -19,6 +19,7 @@ RUN apt-get update \
         ros-"$ROS_DISTRO"-rosbag2-storage-mcap \
         ros-"$ROS_DISTRO"-velodyne-msgs \
         ros-"$ROS_DISTRO"-geographic-msgs \
+        ros-"$ROS_DISTRO"-pandar-msgs \
         ros-"$ROS_DISTRO"-autoware-*-msgs \
         python3-pip \
         python3-vcstool \
@@ -65,15 +66,13 @@ WORKDIR $DEP_WS
 # Clone Humble Dataspeed repos, to be compiled in Jazzy
 RUN git clone https://bitbucket.org/DataspeedInc/dbw_ros.git /opt/dbw_ros
 
-# Move to src only necessary pkgs
+# Move to src only necessary msg pkgs
 RUN mkdir -p $DEP_WS/src \
  && mv /opt/dbw_ros/dbw1/dataspeed_ulc_msgs $DEP_WS/src/ \
  && mv /opt/dbw_ros/dbw1/dbw_ford_msgs $DEP_WS/src/
 
-# Clone repos and build autoware msgs
-COPY autoware_msgs.repos $DEP_WS/
-RUN vcs import src < autoware_msgs.repos \
-    && . /opt/ros/"$ROS_DISTRO"/setup.sh \
+# Compile msg pkgs from source
+RUN . /opt/ros/"$ROS_DISTRO"/setup.sh \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && rm -rf ./src ./build ./log \
     && echo "source $DEP_WS/install/setup.bash" >> /etc/bash.bashrc
@@ -125,7 +124,7 @@ RUN echo 'alias colcon_build="colcon build --symlink-install \
     --cmake-args -DCMAKE_BUILD_TYPE=Release && \
     source install/setup.bash"' >> /etc/bash.bashrc
 
-# Enter bash for clvelopment
+# Enter bash for development
 CMD ["bash"]
 
 # -----------------------------------------------------------------------
