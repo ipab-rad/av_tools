@@ -70,15 +70,12 @@ docker build \
     -t av_tools:latest \
     -f Dockerfile --target runtime .
 
-# Get the absolute path of the script
-SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
-
 # Run docker image
 docker run -it --rm --net host --privileged \
     --user "$(id -u):$(id -g)" \
     -v /dev:/dev \
     -v /tmp:/tmp \
     -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
-    -v $SCRIPT_DIR/deps:/opt/ros_ws/deps \
+    -v $PWD/deps:/opt/ros_ws/deps \
     -v /etc/localtime:/etc/localtime:ro \
-    av_tools:latest $BASH_CMD
+    ghcr.io/assistive-autonomy/av_tools:latest $BASH_CMD
