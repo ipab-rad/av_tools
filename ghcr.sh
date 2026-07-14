@@ -1,0 +1,82 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# Build docker image and run ROS code for runtime or interactively with bash
+# ---------------------------------------------------------------------------
+
+BASH_CMD=""
+
+# Default in-vehicle rosbags directory
+ROSBAGS_DIR=/recorded_datasets/edinburgh
+CHECK_PATH=true
+
+# Function to print usage
+usage() {
+    echo "
+Usage: runtime.sh [-b|bash] [--path | -p ] [--help | -h]
+
+Options:
+    -b | bash       Open bash in docker container
+    -f | --foxglove Run Foxglove bridge instead of recording a bag
+    -p | --path   ROSBAGS_DIR_PATH
+                    Specify path to store recorded rosbags
+    -h | --help     Display this help message and exit.
+    "
+    exit 1
+}
+
+
+# Parse command-line options
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -b|bash)
+            BASH_CMD=bash
+            ;;
+            # Option to specify path
+        -f|--foxglove)
+            BASH_CMD=/opt/ros_ws/container_tools/foxglove_bridge.sh
+            CHECK_PATH=false
+            ;;
+        -p|--path)
+            if [[ -n "$2" && "$2" != -* ]]; then
+                ROSBAGS_DIR="$2"
+                shift
+            else
+                echo "Error: Argument for $1 is missing."
+                usage
+            fi
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            ;;
+    esac
+    shift
+done
+
+# Verify ROSBAGS_DIR exists
+if [ ! -d "$ROSBAGS_DIR" -a "$CHECK_PATH" = true ]; then
+    echo "$ROSBAGS_DIR does not exist! Please provide a valid path to store rosbags"
+    exit 1
+fi
+
+# Build docker image only up to runtime stage
+docker build \
+    --build-arg USER_ID=$(id -u) \
+    --build-arg GROUP_ID=$(id -g) \
+    --build-arg USERNAME=$(whoami) \
+    -t av_tools:latest \
+    -f Dockerfile --target runtime .
+
+# Run docker image
+docker run -it --rm --net host --privileged \
+    --user "$(id -u):$(id -g)" \
+    -v /dev:/dev \
+    -v /tmp:/tmp \
+    -v $ROSBAGS_DIR:/opt/ros_ws/rosbags \
+    -v $PWD/deps:/opt/ros_ws/deps \
+    -v /etc/localtime:/etc/localtime:ro \
+    ghcr.io/assistive-autonomy/av_tools:latest $BASH_CMD
+
