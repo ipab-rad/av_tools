@@ -79,4 +79,3 @@ docker run -it --rm --net host --privileged \
     -v $PWD/deps:/opt/ros_ws/deps \
     -v /etc/localtime:/etc/localtime:ro \
     ghcr.io/assistive-autonomy/av_tools:latest $BASH_CMD
-
