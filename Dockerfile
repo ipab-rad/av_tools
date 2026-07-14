@@ -45,7 +45,7 @@ WORKDIR $ROS_WS
 # https://github.com/ros2/rmw_zenoh/pull/1005
 RUN mkdir "$ROS_WS"/src -p \
     && git clone https://github.com/assistive-autonomy/rmw_zenoh -b "$ROS_DISTRO" "$ROS_WS"/src/rmw_zenoh \
-    && apt-get update && DEBIAN_FRONTEND=noninteractive \
+    && apt-get update \
     && rosdep install --from-paths src --ignore-src --rosdistro "$ROS_DISTRO" -y \
     && rm -rf /var/lib/apt/lists/*
 
