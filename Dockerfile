@@ -40,6 +40,15 @@ RUN apt-get update \
 ENV ROS_WS=/opt/ros_ws
 WORKDIR $ROS_WS
 
+# Get jazzy source rmw_zenoh and patch source via custom files
+# This will become unnecessary when this PR is merged and backported to Jazzy
+# https://github.com/ros2/rmw_zenoh/pull/1005
+RUN mkdir "$ROS_WS"/src -p \
+    && git clone https://github.com/assistive-autonomy/rmw_zenoh -b "$ROS_DISTRO" "$ROS_WS"/src/rmw_zenoh \
+    && apt-get update && DEBIAN_FRONTEND=noninteractive \
+    && rosdep install --from-paths src --ignore-src --rosdistro "$ROS_DISTRO" -y \
+    && rm -rf /var/lib/apt/lists/*
+
 # Setup Zenoh ROS2 RMW
 ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp
 
