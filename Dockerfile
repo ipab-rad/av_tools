@@ -24,8 +24,8 @@ RUN apt-get update \
         python3-pip \
         python3-vcstool \
         python3-colorama \
-        # Install Zenoh ROS2 RMW
-        ros-"$ROS_DISTRO"-rmw-zenoh-cpp \
+        # Do not get apt Zenoh ROS2 RMW due to upstream freeze bug
+        # ros-"$ROS_DISTRO"-rmw-zenoh-cpp \
     && pip install --no-cache-dir --break-system-packages mcap \
     && rm -rf /var/lib/apt/lists/*
 
@@ -68,23 +68,19 @@ RUN echo "export PATH=$ROS_WS/container_tools:$PATH " >> /etc/bash.bashrc &&\
     #    convenience when running interactively
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /etc/bash.bashrc
 
-# Create dep_ws
-ENV DEP_WS=/opt/dep_ws
-WORKDIR $DEP_WS
-
 # Clone Humble Dataspeed repos, to be compiled in Jazzy
 RUN git clone https://bitbucket.org/DataspeedInc/dbw_ros.git /opt/dbw_ros
 
 # Move to src only necessary msg pkgs
-RUN mkdir -p $DEP_WS/src \
- && mv /opt/dbw_ros/dbw1/dataspeed_ulc_msgs $DEP_WS/src/ \
- && mv /opt/dbw_ros/dbw1/dbw_ford_msgs $DEP_WS/src/
+RUN mkdir -p $ROS_WS/src \
+ && mv /opt/dbw_ros/dbw1/dataspeed_ulc_msgs $ROS_WS/src/ \
+ && mv /opt/dbw_ros/dbw1/dbw_ford_msgs $ROS_WS/src/
 
 # Compile msg pkgs from source
 RUN . /opt/ros/"$ROS_DISTRO"/setup.sh \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && rm -rf ./src ./build ./log \
-    && echo "source $DEP_WS/install/setup.bash" >> /etc/bash.bashrc
+    && echo "source $ROS_WS/install/setup.bash" >> /etc/bash.bashrc
 
 # Come back to ros_ws
 WORKDIR $ROS_WS
@@ -138,7 +134,6 @@ CMD ["bash"]
 
 # -----------------------------------------------------------------------
 
-FROM base AS runtime
+FROM dev AS runtime
 
-# Start recording a rosbag by default
-CMD ["/opt/ros_ws/container_tools/record_rosbag.sh"]
+CMD ["bash"]
